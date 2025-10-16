@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Output
+*.png
+*.pdf
+*.html
+_temp_*
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

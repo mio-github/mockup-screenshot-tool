@@ -1,0 +1,96 @@
+{
+  "projectName": "プロジェクト名",
+  "subtitle": "サブタイトル",
+  "client": "クライアント企業名",
+  "vendor": "ベンダー企業名",
+  "baseUrl": "http://localhost:3000",
+  "outputDir": "./mockup-output",
+  "screenshotsDir": "./mockup-output/screenshots",
+  "annotatedDir": "./mockup-output/screenshots-annotated",
+  "pdfFileName": "画面一覧.pdf",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "pages": [
+    {
+      "path": "/",
+      "name": "01_ホーム",
+      "waitStrategy": "basic"
+    },
+    {
+      "path": "/dashboard",
+      "name": "02_ダッシュボード",
+      "waitStrategy": "graph"
+    }
+  ],
+  "annotations": {
+    "01_ホーム": {
+      "items": [
+        {
+          "x": 960,
+          "y": 400,
+          "text": "メイン機能",
+          "description": "機能の説明を\n複数行で記述可能",
+          "direction": "top"
+        }
+      ]
+    },
+    "02_ダッシュボード": {
+      "items": [
+        {
+          "x": 400,
+          "y": 300,
+          "text": "KPI表示",
+          "description": "主要指標を表示",
+          "direction": "left"
+        },
+        {
+          "x": 1500,
+          "y": 300,
+          "text": "グラフエリア",
+          "description": "データを可視化",
+          "direction": "right"
+        }
+      ]
+    }
+  },
+  "screens": [
+    {
+      "filename": "01_ホーム",
+      "title": "ホーム画面",
+      "category": "共通",
+      "description": "システムのホーム画面です。主要な機能にアクセスできます。"
+    },
+    {
+      "filename": "02_ダッシュボード",
+      "title": "ダッシュボード",
+      "category": "管理",
+      "description": "システム全体の状況を一目で確認できるダッシュボード画面です。"
+    }
+  ],
+  "pdfOptions": {
+    "format": "A4",
+    "landscape": true,
+    "printBackground": true
+  },
+  "overview": {
+    "enabled": true,
+    "title": "システム概要",
+    "sections": [
+      {
+        "heading": "このシステムで実現できること",
+        "content": "システムの主な機能や目的を記述します。"
+      },
+      {
+        "heading": "主な機能",
+        "content": "機能の一覧や説明を記述します。",
+        "items": [
+          "機能1: 説明",
+          "機能2: 説明",
+          "機能3: 説明"
+        ]
+      }
+    ]
+  }
+}

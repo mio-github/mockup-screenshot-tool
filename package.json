@@ -1,0 +1,39 @@
+{
+  "name": "mockup-screenshot-tool",
+  "version": "1.0.0",
+  "description": "React/Next.js製モックアプリケーションの全画面を自動キャプチャし、アノテーション付きPDFを生成するツール",
+  "main": "index.js",
+  "bin": {
+    "mst-capture": "./bin/capture.js",
+    "mst-annotate": "./bin/annotate.js",
+    "mst-pdf": "./bin/pdf.js"
+  },
+  "scripts": {
+    "capture": "node bin/capture.js",
+    "annotate": "node bin/annotate.js",
+    "pdf": "node bin/pdf.js",
+    "all": "npm run capture && npm run annotate && npm run pdf",
+    "setup": "npm install && npx playwright install chromium"
+  },
+  "keywords": [
+    "screenshot",
+    "mockup",
+    "pdf",
+    "annotation",
+    "playwright",
+    "nextjs",
+    "react"
+  ],
+  "author": "TARA",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.56.0",
+    "image-size": "^2.0.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
