@@ -84,6 +84,12 @@ async function captureScreenshots() {
       console.log(`[>>] ${pageInfo.name}`);
       console.log(`     URL: ${url}`);
 
+      // ページごとのviewport設定があれば適用
+      if (pageInfo.viewport) {
+        await page.setViewportSize(pageInfo.viewport);
+        console.log(`     ビューポート: ${pageInfo.viewport.width}x${pageInfo.viewport.height}`);
+      }
+
       // ページにアクセス
       await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
 
@@ -115,15 +121,31 @@ async function captureScreenshots() {
         await waitByStrategy(page, pageInfo.waitStrategy);
       }
 
+      // beforeScreenshot処理の実行
+      if (pageInfo.beforeScreenshot) {
+        console.log('     beforeScreenshot処理を実行中...');
+        await eval(`(async () => { ${pageInfo.beforeScreenshot} })()`);
+      }
+
       // 最終的な安定化待機
       await page.waitForTimeout(1000);
 
-      // フルページスクリーンショット
+      // スクリーンショット設定の準備
       const screenshotPath = path.join(screenshotsDir, `${pageInfo.name}.png`);
-      await page.screenshot({
+      const screenshotOptions = {
         path: screenshotPath,
-        fullPage: true,
-      });
+      };
+
+      // clip設定があればそれを使用、なければfullPage
+      if (pageInfo.clip) {
+        screenshotOptions.clip = pageInfo.clip;
+        screenshotOptions.fullPage = true; // clipを使う場合もfullPageが必要
+        console.log(`     クリッピング: x=${pageInfo.clip.x}, y=${pageInfo.clip.y}, ${pageInfo.clip.width}x${pageInfo.clip.height}`);
+      } else {
+        screenshotOptions.fullPage = true;
+      }
+
+      await page.screenshot(screenshotOptions);
 
       console.log(`[✓] 保存完了: ${screenshotPath}\n`);
       successCount++;

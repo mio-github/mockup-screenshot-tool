@@ -162,7 +162,7 @@ node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
 ### 主要な設定項目
 
 #### pages配列
-- `path`: アクセスするURL（baseUrlからの相対パス）
+- `path`: アクセスするURL（baseUrlからの相対パス、ハッシュ付きURLにも対応 例: `/#analytics`）
 - `name`: ファイル名（拡張子なし）
 - `waitStrategy`: 待機戦略
   - `basic`: 基本的な待機（2秒）
@@ -170,6 +170,26 @@ node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
   - `video`: 動画サムネイル表示（3秒）
   - `table`: データテーブル表示（3秒）
   - `live`: ライブカメラフィード（4秒）
+- `viewport` (オプション): ページごとの表示領域サイズ
+  ```json
+  "viewport": {
+    "width": 1920,
+    "height": 800
+  }
+  ```
+- `clip` (オプション): 画面の一部だけをキャプチャ（画面分割に最適）
+  ```json
+  "clip": {
+    "x": 0,
+    "y": 300,
+    "width": 1920,
+    "height": 600
+  }
+  ```
+- `beforeScreenshot` (オプション): スクリーンショット撮影前に実行するJavaScriptコード
+  ```json
+  "beforeScreenshot": "await page.evaluate(() => window.scrollTo(0, 500)); await page.waitForTimeout(300)"
+  ```
 
 #### annotations定義
 - `x`, `y`: アノテーションの対象座標
@@ -182,6 +202,105 @@ node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
 - `title`: PDF内での表示タイトル
 - `category`: カテゴリ（色分けされる）
 - `description`: 画面の詳細説明
+
+## 高度な使用例
+
+### 縦長画面を複数の画像に分割してキャプチャ
+
+Analytics画面など、縦に長い画面を機能ごとに分割してキャプチャできます:
+
+```json
+{
+  "pages": [
+    {
+      "path": "/#analytics",
+      "name": "analytics_full",
+      "waitStrategy": "basic",
+      "beforeScreenshot": "await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(300)"
+    },
+    {
+      "path": "/#analytics",
+      "name": "analytics_kpi",
+      "waitStrategy": "basic",
+      "clip": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 300
+      },
+      "beforeScreenshot": "await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(300)"
+    },
+    {
+      "path": "/#analytics",
+      "name": "analytics_charts",
+      "waitStrategy": "basic",
+      "clip": {
+        "x": 0,
+        "y": 300,
+        "width": 1920,
+        "height": 1000
+      },
+      "beforeScreenshot": "await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(300)"
+    }
+  ]
+}
+```
+
+この設定により:
+- `analytics_full.png`: 完全版(全セクション表示)
+- `analytics_kpi.png`: KPIカードのみ
+- `analytics_charts.png`: チャート部分のみ
+
+と、同じページを異なる領域で分割してキャプチャできます。
+
+### SPAのハッシュルーティングに対応
+
+React Router等のハッシュベースのルーティングにも対応しています:
+
+```json
+{
+  "pages": [
+    {
+      "path": "/#/home",
+      "name": "home"
+    },
+    {
+      "path": "/#/dashboard",
+      "name": "dashboard"
+    },
+    {
+      "path": "/#/settings",
+      "name": "settings"
+    }
+  ]
+}
+```
+
+### スクロール位置を調整してキャプチャ
+
+`beforeScreenshot`を使って、画面の特定部分を表示してからキャプチャできます:
+
+```json
+{
+  "pages": [
+    {
+      "path": "/long-page",
+      "name": "section_1",
+      "beforeScreenshot": "await page.evaluate(() => window.scrollTo(0, 0)); await page.waitForTimeout(500)"
+    },
+    {
+      "path": "/long-page",
+      "name": "section_2",
+      "beforeScreenshot": "await page.evaluate(() => window.scrollTo(0, 1500)); await page.waitForTimeout(500)"
+    },
+    {
+      "path": "/long-page",
+      "name": "section_3",
+      "beforeScreenshot": "await page.evaluate(() => window.scrollTo(0, 3000)); await page.waitForTimeout(500)"
+    }
+  ]
+}
+```
 
 ## トラブルシューティング
 
