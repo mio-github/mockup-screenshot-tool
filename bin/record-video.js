@@ -132,11 +132,11 @@ async function recordVideo() {
     console.log('[*] ブラウザを起動中...');
     const browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({
-      viewport: pageInfo.viewport || viewport || { width: 1920, height: 1080 },
+      viewport: pageInfo.viewport || viewport || { width: 1440, height: 900 },
       deviceScaleFactor: 1,
       recordVideo: {
         dir: videosDir,
-        size: pageInfo.viewport || viewport || { width: 1920, height: 1080 }
+        size: pageInfo.viewport || viewport || { width: 1440, height: 900 }
       }
     });
     const page = await context.newPage();

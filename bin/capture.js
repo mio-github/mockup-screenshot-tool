@@ -196,7 +196,7 @@ async function captureScreenshots() {
   for (const pageInfo of pages) {
     // 各ページごとに新しいコンテキストとページを作成（確実な分離）
     const context = await browser.newContext({
-      viewport: pageInfo.viewport || viewport || { width: 1920, height: 1080 },
+      viewport: pageInfo.viewport || viewport || { width: 1440, height: 900 },
       deviceScaleFactor: 1,
     });
     const page = await context.newPage();

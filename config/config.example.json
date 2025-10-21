@@ -9,8 +9,8 @@
   "annotatedDir": "./mockup-output/screenshots-annotated",
   "pdfFileName": "画面一覧.pdf",
   "viewport": {
-    "width": 1920,
-    "height": 1080
+    "width": 1440,
+    "height": 900
   },
   "pages": [
     {

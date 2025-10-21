@@ -67,7 +67,7 @@ async function main() {
 
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage({
-    viewport: { width: 1920, height: 1080 }
+    viewport: { width: 1440, height: 900 }
   });
 
   try {
