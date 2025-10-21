@@ -126,7 +126,8 @@
   "pdfOptions": {
     "format": "A4",
     "landscape": true,
-    "printBackground": true
+    "printBackground": true,
+    "layout": "single"
   },
   "overview": {
     "enabled": true,

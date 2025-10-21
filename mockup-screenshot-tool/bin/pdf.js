@@ -20,6 +20,17 @@ async function main() {
   const config = loadConfig(process.argv[2]);
   const { screens, annotatedDir, screenshotsDir, pdfFileName, pdfOptions } = config;
 
+  // レイアウト設定の確認
+  const layout = pdfOptions?.layout || 'single';
+  if (layout === 'detailed') {
+    console.log('[*] レイアウトモード: 詳細版（2ページ構成）');
+    console.log('[!] 詳細版PDFを生成する場合は、pdf-detailed.js を使用してください。');
+    console.log('    例: node bin/pdf-detailed.js\n');
+    process.exit(1);
+  } else {
+    console.log('[*] レイアウトモード: シングル（1ページ構成）\n');
+  }
+
   const outputPdfPath = path.join(annotatedDir, pdfFileName || '画面一覧.pdf');
 
   // 注釈付きスクリーンショットが存在するか確認し、なければ元画像を使用

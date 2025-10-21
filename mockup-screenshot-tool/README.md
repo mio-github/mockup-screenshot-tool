@@ -47,7 +47,8 @@ source ~/.zshrc
 mst-capture    # スクリーンショット撮影
 mst-record     # 動画録画（🆕）
 mst-annotate   # アノテーション追加
-mst-pdf        # PDF生成
+mst-pdf        # PDF生成（シングルページ構成）
+mst-pdf-detail # PDF生成（詳細版・2ページ構成）🆕
 ```
 
 ## 使い方
@@ -100,8 +101,11 @@ node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/capture.js
 # アノテーション追加のみ
 node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js
 
-# PDF生成のみ
+# PDF生成のみ（シングルページ構成）
 node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js
+
+# PDF生成のみ（詳細版・2ページ構成）
+node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf-detailed.js
 ```
 
 ## 設定ファイルの構造
@@ -152,7 +156,8 @@ node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js
   "pdfOptions": {
     "format": "A4",
     "landscape": true,
-    "printBackground": true
+    "printBackground": true,
+    "layout": "single"
   },
   "overview": {
     "enabled": true,
@@ -311,6 +316,27 @@ node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js
 - `title`: PDF内での表示タイトル
 - `category`: カテゴリ（色分けされる）
 - `description`: 画面の詳細説明
+
+#### pdfOptions設定
+- `format`: 用紙サイズ（`A4`, `A3`, `Letter`など）
+- `landscape`: 横向き出力（`true` / `false`）
+- `printBackground`: 背景色を印刷（`true` / `false`）
+- `layout`: **🆕 PDFレイアウトモード**
+  - `single`: 1ページ構成（デフォルト） - 各画面を1ページにまとめたコンパクトな形式
+  - `detailed`: 2ページ構成 - 各画面を「スクリーンショット+サマリ」「詳細説明」の2ページで出力
+
+  ```json
+  "pdfOptions": {
+    "format": "A4",
+    "landscape": true,
+    "printBackground": true,
+    "layout": "single"
+  }
+  ```
+
+**レイアウトモードの使い分け:**
+- `single`: クイックレビューや画面一覧を作成する場合に最適
+- `detailed`: 詳細な機能説明やプレゼンテーション資料として使用する場合に最適（`bin/pdf-detailed.js`を使用）
 
 ## 高度な使用例
 

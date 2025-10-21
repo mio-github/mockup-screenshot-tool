@@ -21,8 +21,10 @@ cat >> "$SHELL_RC" << 'EOF'
 
 # Mockup Screenshot Tool
 alias mst-capture="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/capture.js"
+alias mst-record="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/record-video.js"
 alias mst-annotate="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js"
 alias mst-pdf="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js"
+alias mst-pdf-detail="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf-detailed.js"
 EOF
 
 echo "✓ エイリアスを $SHELL_RC に追加しました"
@@ -31,6 +33,8 @@ echo "以下のコマンドで設定を反映してください："
 echo "  source ~/.zshrc"
 echo ""
 echo "使い方："
-echo "  mst-capture    # スクリーンショット撮影"
-echo "  mst-annotate   # アノテーション追加"
-echo "  mst-pdf        # PDF生成"
+echo "  mst-capture      # スクリーンショット撮影"
+echo "  mst-record       # 動画録画"
+echo "  mst-annotate     # アノテーション追加"
+echo "  mst-pdf          # PDF生成（シングルページ）"
+echo "  mst-pdf-detail   # PDF生成（詳細版・2ページ構成）"
