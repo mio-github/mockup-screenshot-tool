@@ -2,6 +2,7 @@
   "name": "mockup-screenshot-tool",
   "version": "1.1.0",
   "description": "React/Next.js製モックアプリケーションの全画面を自動キャプチャし、アノテーション付きPDFを生成するツール（CLI & MCP対応）",
+  "type": "module",
   "main": "mcp-server.js",
   "bin": {
     "mst-capture": "./bin/capture.js",
