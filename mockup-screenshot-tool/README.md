@@ -119,7 +119,28 @@ Claude DesktopやClaude Code経由で自然言語で操作できます。
 
 #### セットアップ
 
-Claude Desktopの設定ファイル（`~/Library/Application Support/Claude/claude_desktop_config.json`）に以下を追加：
+**Claude Codeの場合:**
+
+`~/.config/claude/claude_code_config.json` に以下を追加：
+
+```json
+{
+  "mcpServers": {
+    "mockup-screenshot-tool": {
+      "command": "node",
+      "args": [
+        "/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js"
+      ]
+    }
+  }
+}
+```
+
+詳細は [CLAUDE_CODE_SETUP.md](./CLAUDE_CODE_SETUP.md) を参照してください。
+
+**Claude Desktopの場合:**
+
+`~/Library/Application Support/Claude/claude_desktop_config.json` に以下を追加：
 
 ```json
 {
