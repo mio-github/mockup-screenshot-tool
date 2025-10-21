@@ -62,9 +62,25 @@ open -e ~/.config/claude/claude_code_config.json
 }
 ```
 
-### 4. Claude Codeを再起動
+### 4. Claude Codeを再起動 ⚠️ 重要
 
-設定を反映させるため、Claude Codeを再起動します。
+**設定を反映させるため、Claude Codeのプロセスを完全に終了してから再起動してください。**
+
+#### macOS/Linuxの場合:
+
+```bash
+# 全てのClaude Codeプロセスを終了
+pkill -f claude
+
+# または、アクティビティモニタから終了
+```
+
+その後、Claude Codeを新規に起動します。
+
+#### 注意事項:
+- 単にターミナルウィンドウを閉じるだけでは不十分です
+- バックグラウンドで動作している全てのClaude Codeプロセスを終了する必要があります
+- 設定ファイルはClaude Code起動時に一度だけ読み込まれます
 
 ## 動作確認
 
