@@ -5,10 +5,10 @@
  * Playwrightを使用してブラウザ操作を録画し、MP4動画として保存
  */
 
-const { chromium } = require('playwright');
-const path = require('path');
-const fs = require('fs');
-const { loadConfig } = require('../lib/config-loader');
+import { chromium } from 'playwright';
+import path from 'path';
+import fs from 'fs';
+import { loadConfig } from '../lib/config-loader.js';
 
 /**
  * ブラウザ操作アクションを実行

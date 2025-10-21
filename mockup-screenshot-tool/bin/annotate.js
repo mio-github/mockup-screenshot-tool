@@ -4,12 +4,12 @@
  * スクリーンショットにSVG注釈を追加するスクリプト
  */
 
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
-const { imageSize } = require('image-size');
-const { loadConfig } = require('../lib/config-loader');
-const { generateAnnotatedHTML } = require('../lib/html-generator');
+import { chromium } from 'playwright';
+import fs from 'fs';
+import path from 'path';
+import { imageSize } from 'image-size';
+import { loadConfig } from '../lib/config-loader.js';
+import { generateAnnotatedHTML } from '../lib/html-generator.js';
 
 /**
  * アノテーション追加メイン処理

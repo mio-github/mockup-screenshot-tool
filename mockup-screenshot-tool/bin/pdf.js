@@ -4,11 +4,11 @@
  * 注釈付きスクリーンショットをPDFにまとめるスクリプト
  */
 
-const { chromium } = require('playwright');
-const fs = require('fs');
-const path = require('path');
-const { loadConfig } = require('../lib/config-loader');
-const { generatePDFHTML } = require('../lib/html-generator');
+import { chromium } from 'playwright';
+import fs from 'fs';
+import path from 'path';
+import { loadConfig } from '../lib/config-loader.js';
+import { generatePDFHTML } from '../lib/html-generator.js';
 
 /**
  * PDF生成メイン処理

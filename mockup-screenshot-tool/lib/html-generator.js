@@ -2,9 +2,9 @@
  * HTMLテンプレート生成モジュール
  */
 
-const fs = require('fs');
-const path = require('path');
-const { imageSize } = require('image-size');
+import fs from 'fs';
+import path from 'path';
+import { imageSize } from 'image-size';
 
 /**
  * アノテーション付きHTMLを生成
@@ -634,7 +634,7 @@ function getPDFStyles(layoutOptions = {}) {
   `;
 }
 
-module.exports = {
+export {
   generateAnnotatedHTML,
   generatePDFHTML,
 };

@@ -5,10 +5,10 @@
  * React/Next.jsモックアプリの画面をキャプチャする
  */
 
-const { chromium } = require('playwright');
-const path = require('path');
-const fs = require('fs');
-const { loadConfig } = require('../lib/config-loader');
+import { chromium } from 'playwright';
+import path from 'path';
+import fs from 'fs';
+import { loadConfig } from '../lib/config-loader.js';
 
 /**
  * ブラウザ操作アクションを実行

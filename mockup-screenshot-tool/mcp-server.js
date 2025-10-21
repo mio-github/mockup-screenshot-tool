@@ -11,13 +11,417 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { spawn } from 'child_process';
+import { spawn, exec } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
+import { chromium } from 'playwright';
+import { promisify } from 'util';
+
+const execPromise = promisify(exec);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+/**
+ * ブラウザ操作アクションを実行
+ */
+async function executeActions(page, actions) {
+  if (!actions || actions.length === 0) return;
+
+  const results = [];
+
+  for (let i = 0; i < actions.length; i++) {
+    const action = actions[i];
+    const actionDesc = action.description || `${action.type}`;
+
+    try {
+      switch (action.type) {
+        case 'click':
+          if (action.selector) {
+            await page.click(action.selector);
+            results.push(`✓ クリック: ${action.selector}`);
+          }
+          break;
+
+        case 'type':
+          if (action.selector && action.value) {
+            await page.fill(action.selector, action.value);
+            results.push(`✓ 入力: ${action.selector} = "${action.value}"`);
+          }
+          break;
+
+        case 'scroll':
+          if (action.x !== undefined && action.y !== undefined) {
+            await page.evaluate(({ x, y }) => window.scrollTo(x, y), { x: action.x, y: action.y });
+            results.push(`✓ スクロール: (${action.x}, ${action.y})`);
+          }
+          break;
+
+        case 'hover':
+          if (action.selector) {
+            await page.hover(action.selector);
+            results.push(`✓ ホバー: ${action.selector}`);
+          }
+          break;
+
+        case 'select':
+          if (action.selector && action.value) {
+            await page.selectOption(action.selector, action.value);
+            results.push(`✓ 選択: ${action.selector} = "${action.value}"`);
+          }
+          break;
+
+        case 'wait':
+          const duration = action.duration || 1000;
+          await page.waitForTimeout(duration);
+          results.push(`✓ 待機: ${duration}ms`);
+          break;
+
+        case 'waitForSelector':
+          if (action.selector) {
+            await page.waitForSelector(action.selector, { timeout: action.timeout || 5000 });
+            results.push(`✓ 要素待機: ${action.selector}`);
+          }
+          break;
+
+        case 'evaluate':
+          if (action.code) {
+            await page.evaluate(action.code);
+            results.push(`✓ カスタムJS実行`);
+          }
+          break;
+
+        default:
+          results.push(`⚠ 未知のアクション: ${action.type}`);
+      }
+
+      // アクション間の待機
+      await page.waitForTimeout(300);
+    } catch (error) {
+      results.push(`✗ アクションエラー (${actionDesc}): ${error.message}`);
+    }
+  }
+
+  return results;
+}
+
+/**
+ * 待機戦略に基づいた待機処理
+ */
+async function waitByStrategy(page, strategy) {
+  switch (strategy) {
+    case 'graph':
+      try {
+        await page.waitForSelector('svg, canvas', { timeout: 10000 });
+        await page.waitForTimeout(3000);
+      } catch (e) {
+        await page.waitForTimeout(5000);
+      }
+      break;
+
+    case 'video':
+      await page.waitForTimeout(3000);
+      break;
+
+    case 'table':
+      try {
+        await page.waitForSelector('table, [role="table"]', { timeout: 5000 });
+        await page.waitForTimeout(2000);
+      } catch (e) {
+        await page.waitForTimeout(3000);
+      }
+      break;
+
+    case 'live':
+      await page.waitForTimeout(4000);
+      break;
+
+    case 'basic':
+    default:
+      await page.waitForTimeout(2000);
+      break;
+  }
+}
+
+/**
+ * navigate_and_captureツールの実装
+ */
+async function navigateAndCapture(args) {
+  const {
+    baseUrl,
+    path: urlPath,
+    name,
+    outputDir = './mockup-output/screenshots',
+    viewport = { width: 1920, height: 1080 },
+    actions = [],
+    waitStrategy = 'basic',
+  } = args;
+
+  // 出力ディレクトリを作成
+  const absoluteOutputDir = path.isAbsolute(outputDir)
+    ? outputDir
+    : path.join(process.cwd(), outputDir);
+
+  if (!fs.existsSync(absoluteOutputDir)) {
+    fs.mkdirSync(absoluteOutputDir, { recursive: true });
+  }
+
+  const browser = await chromium.launch({ headless: true });
+  const context = await browser.newContext({ viewport });
+  const page = await context.newPage();
+
+  const results = [];
+
+  try {
+    const url = `${baseUrl}${urlPath}`;
+    results.push(`[*] アクセス: ${url}`);
+
+    // ページにアクセス
+    await page.goto(url, { waitUntil: 'load', timeout: 30000 });
+    results.push(`[*] 初期ロード完了`);
+
+    // Reactのハイドレーション完了を待つ
+    await page.waitForTimeout(1500);
+
+    // ネットワークアイドル状態を待つ
+    try {
+      await page.waitForLoadState('networkidle', { timeout: 10000 });
+    } catch (e) {
+      results.push(`[*] networkidle タイムアウト（続行）`);
+    }
+
+    // 画像の読み込みを待つ
+    try {
+      await page.evaluate(() => {
+        const images = Array.from(document.images);
+        return Promise.all(
+          images.map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise((resolve) => {
+              img.addEventListener('load', resolve);
+              img.addEventListener('error', resolve);
+              setTimeout(resolve, 5000);
+            });
+          })
+        );
+      });
+      results.push(`[*] 画像の読み込み完了`);
+    } catch (e) {
+      results.push(`[*] 画像の読み込みチェックをスキップ`);
+    }
+
+    // 待機戦略に基づいた追加の待機
+    await waitByStrategy(page, waitStrategy);
+
+    // ブラウザ操作アクションを実行
+    if (actions.length > 0) {
+      results.push(`[*] ${actions.length}個のアクションを実行中...`);
+      const actionResults = await executeActions(page, actions);
+      results.push(...actionResults.map(r => `    ${r}`));
+    }
+
+    // 最終的な安定化待機
+    await page.waitForTimeout(2000);
+
+    // スクリーンショット撮影
+    const screenshotPath = path.join(absoluteOutputDir, `${name}.png`);
+    await page.screenshot({
+      path: screenshotPath,
+      fullPage: true,
+      animations: 'disabled',
+    });
+
+    results.push(`[✓] 保存完了: ${screenshotPath}`);
+
+    await browser.close();
+
+    return {
+      success: true,
+      output: results.join('\n'),
+      screenshotPath,
+    };
+  } catch (error) {
+    await browser.close();
+    throw error;
+  }
+}
+
+/**
+ * WebMをMP4に変換
+ */
+async function convertWebMToMP4(webmPath, mp4Path) {
+  const ffmpegCommand = `ffmpeg -i "${webmPath}" -c:v libx264 -preset fast -crf 23 -c:a aac -movflags +faststart "${mp4Path}" -y`;
+
+  try {
+    await execPromise(ffmpegCommand);
+    return true;
+  } catch (error) {
+    throw new Error(`MP4変換エラー: ${error.message}`);
+  }
+}
+
+/**
+ * navigate_and_recordツールの実装
+ * LLMが指定した操作シーケンスを動画として記録
+ */
+async function navigateAndRecord(args) {
+  const {
+    baseUrl,
+    path: urlPath,
+    name,
+    outputDir = './mockup-output/videos',
+    viewport = { width: 1920, height: 1080 },
+    actions = [],
+    waitStrategy = 'basic',
+    recordingOptions = {},
+  } = args;
+
+  // 出力ディレクトリを作成
+  const absoluteOutputDir = path.isAbsolute(outputDir)
+    ? outputDir
+    : path.join(process.cwd(), outputDir);
+
+  if (!fs.existsSync(absoluteOutputDir)) {
+    fs.mkdirSync(absoluteOutputDir, { recursive: true });
+  }
+
+  const browser = await chromium.launch({ headless: true });
+  const context = await browser.newContext({
+    viewport,
+    recordVideo: {
+      dir: absoluteOutputDir,
+      size: viewport,
+    },
+  });
+  const page = await context.newPage();
+
+  const results = [];
+
+  try {
+    const url = `${baseUrl}${urlPath}`;
+    results.push(`[*] アクセス: ${url}`);
+    results.push(`[*] 録画開始...`);
+
+    // ページにアクセス
+    await page.goto(url, { waitUntil: 'load', timeout: 30000 });
+    results.push(`[*] 初期ロード完了`);
+
+    // Reactのハイドレーション完了を待つ
+    await page.waitForTimeout(1500);
+
+    // ネットワークアイドル状態を待つ
+    try {
+      await page.waitForLoadState('networkidle', { timeout: 10000 });
+    } catch (e) {
+      results.push(`[*] networkidle タイムアウト（続行）`);
+    }
+
+    // 画像の読み込みを待つ
+    try {
+      await page.evaluate(() => {
+        const images = Array.from(document.images);
+        return Promise.all(
+          images.map(img => {
+            if (img.complete) return Promise.resolve();
+            return new Promise((resolve) => {
+              img.addEventListener('load', resolve);
+              img.addEventListener('error', resolve);
+              setTimeout(resolve, 5000);
+            });
+          })
+        );
+      });
+      results.push(`[*] 画像の読み込み完了`);
+    } catch (e) {
+      results.push(`[*] 画像の読み込みチェックをスキップ`);
+    }
+
+    // 待機戦略に基づいた追加の待機
+    await waitByStrategy(page, waitStrategy);
+
+    // 初期状態を録画するための待機
+    const initialDelay = recordingOptions.initialDelay || 2000;
+    results.push(`[*] 初期状態を録画中... (${initialDelay}ms)`);
+    await page.waitForTimeout(initialDelay);
+
+    // ブラウザ操作アクションを実行
+    if (actions.length > 0) {
+      results.push(`[*] ${actions.length}個のアクションを実行中...`);
+      const actionResults = await executeActions(page, actions);
+      results.push(...actionResults.map(r => `    ${r}`));
+    }
+
+    // 最終状態を録画するための待機
+    const finalDelay = recordingOptions.finalDelay || 2000;
+    results.push(`[*] 最終状態を録画中... (${finalDelay}ms)`);
+    await page.waitForTimeout(finalDelay);
+
+    results.push(`[*] 録画終了...`);
+
+    // 生成された動画ファイルのパスを取得（クローズ前）
+    const videoPath = await page.video().path();
+
+    // コンテキストをクローズして動画を保存
+    await context.close();
+    await browser.close();
+
+    // 動画ファイルが生成されるまで少し待機
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    if (!fs.existsSync(videoPath)) {
+      results.push(`[!] 動画ファイルが見つかりません: ${videoPath}`);
+      throw new Error('動画ファイルの生成に失敗しました');
+    }
+
+    // WebMファイルのサイズを取得
+    const webmStats = fs.statSync(videoPath);
+    const webmSizeMB = (webmStats.size / (1024 * 1024)).toFixed(2);
+    results.push(`[*] WebM生成完了 (${webmSizeMB} MB)`);
+
+    // MP4に変換
+    const mp4Path = path.join(absoluteOutputDir, `${name}.mp4`);
+    results.push(`[*] MP4に変換中...`);
+
+    try {
+      await convertWebMToMP4(videoPath, mp4Path);
+      results.push(`[✓] MP4変換完了: ${mp4Path}`);
+
+      // MP4ファイルサイズを取得
+      const mp4Stats = fs.statSync(mp4Path);
+      const mp4SizeMB = (mp4Stats.size / (1024 * 1024)).toFixed(2);
+      results.push(`[*] ファイルサイズ: ${mp4SizeMB} MB`);
+
+      // WebMファイルを削除
+      fs.unlinkSync(videoPath);
+      results.push(`[*] 一時ファイル削除完了`);
+
+      return {
+        success: true,
+        output: results.join('\n'),
+        videoPath: mp4Path,
+      };
+    } catch (conversionError) {
+      results.push(`[!] MP4変換失敗: ${conversionError.message}`);
+      results.push(`[*] WebM形式で保存: ${videoPath}`);
+
+      // 変換失敗時はWebMをリネーム
+      const webmFallbackPath = path.join(absoluteOutputDir, `${name}.webm`);
+      fs.renameSync(videoPath, webmFallbackPath);
+
+      return {
+        success: true,
+        output: results.join('\n'),
+        videoPath: webmFallbackPath,
+        warning: 'MP4変換に失敗したため、WebM形式で保存されました',
+      };
+    }
+  } catch (error) {
+    await context.close();
+    await browser.close();
+    throw error;
+  }
+}
 
 /**
  * CLIツールを実行するヘルパー関数
@@ -97,6 +501,184 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: [
+      {
+        name: 'navigate_and_capture',
+        description: 'LLMが指定したURLにアクセスし、ブラウザ操作を実行してからスクリーンショットをキャプチャします。クリック、入力、スクロールなどの操作を順次実行できます。',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            baseUrl: {
+              type: 'string',
+              description: 'ベースURL（例: http://localhost:3000）',
+            },
+            path: {
+              type: 'string',
+              description: 'アクセスするパス（例: /dashboard）',
+            },
+            name: {
+              type: 'string',
+              description: 'キャプチャ画像のファイル名（拡張子なし）',
+            },
+            outputDir: {
+              type: 'string',
+              description: '保存先ディレクトリ（デフォルト: ./mockup-output/screenshots）',
+            },
+            viewport: {
+              type: 'object',
+              description: 'ビューポートサイズ（デフォルト: 1920x1080）',
+              properties: {
+                width: { type: 'number' },
+                height: { type: 'number' },
+              },
+            },
+            actions: {
+              type: 'array',
+              description: 'スクリーンショット撮影前に実行するブラウザ操作のリスト',
+              items: {
+                type: 'object',
+                properties: {
+                  type: {
+                    type: 'string',
+                    enum: ['click', 'type', 'scroll', 'hover', 'select', 'wait', 'waitForSelector', 'evaluate'],
+                    description: 'アクションの種類',
+                  },
+                  selector: {
+                    type: 'string',
+                    description: 'CSSセレクタ（click, type, hover, select, waitForSelector用）',
+                  },
+                  value: {
+                    type: 'string',
+                    description: '入力値（type, select用）',
+                  },
+                  x: {
+                    type: 'number',
+                    description: 'X座標（scroll用）',
+                  },
+                  y: {
+                    type: 'number',
+                    description: 'Y座標（scroll用）',
+                  },
+                  duration: {
+                    type: 'number',
+                    description: '待機時間（ミリ秒、wait用）',
+                  },
+                  code: {
+                    type: 'string',
+                    description: '実行するJavaScriptコード（evaluate用）',
+                  },
+                  description: {
+                    type: 'string',
+                    description: 'アクションの説明',
+                  },
+                },
+                required: ['type'],
+              },
+            },
+            waitStrategy: {
+              type: 'string',
+              enum: ['basic', 'graph', 'video', 'table', 'live'],
+              description: 'ページロード後の待機戦略（デフォルト: basic）',
+            },
+          },
+          required: ['baseUrl', 'path', 'name'],
+        },
+      },
+      {
+        name: 'navigate_and_record',
+        description: 'LLMが指定したURLにアクセスし、ブラウザ操作を実行しながらその様子を動画で記録します。操作シーケンス全体がMP4形式の動画として保存されます（ffmpegでWebMから自動変換）。',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            baseUrl: {
+              type: 'string',
+              description: 'ベースURL（例: http://localhost:3000）',
+            },
+            path: {
+              type: 'string',
+              description: 'アクセスするパス（例: /dashboard）',
+            },
+            name: {
+              type: 'string',
+              description: '動画ファイル名（拡張子なし、.mp4が自動付与）',
+            },
+            outputDir: {
+              type: 'string',
+              description: '保存先ディレクトリ（デフォルト: ./mockup-output/videos）',
+            },
+            viewport: {
+              type: 'object',
+              description: 'ビューポートサイズ（デフォルト: 1920x1080）',
+              properties: {
+                width: { type: 'number' },
+                height: { type: 'number' },
+              },
+            },
+            actions: {
+              type: 'array',
+              description: '録画中に実行するブラウザ操作のリスト',
+              items: {
+                type: 'object',
+                properties: {
+                  type: {
+                    type: 'string',
+                    enum: ['click', 'type', 'scroll', 'hover', 'select', 'wait', 'waitForSelector', 'evaluate'],
+                    description: 'アクションの種類',
+                  },
+                  selector: {
+                    type: 'string',
+                    description: 'CSSセレクタ',
+                  },
+                  value: {
+                    type: 'string',
+                    description: '入力値',
+                  },
+                  x: {
+                    type: 'number',
+                    description: 'X座標（scroll用）',
+                  },
+                  y: {
+                    type: 'number',
+                    description: 'Y座標（scroll用）',
+                  },
+                  duration: {
+                    type: 'number',
+                    description: '待機時間（ミリ秒）',
+                  },
+                  code: {
+                    type: 'string',
+                    description: '実行するJavaScriptコード',
+                  },
+                  description: {
+                    type: 'string',
+                    description: 'アクションの説明',
+                  },
+                },
+                required: ['type'],
+              },
+            },
+            waitStrategy: {
+              type: 'string',
+              enum: ['basic', 'graph', 'video', 'table', 'live'],
+              description: 'ページロード後の待機戦略（デフォルト: basic）',
+            },
+            recordingOptions: {
+              type: 'object',
+              description: '録画オプション',
+              properties: {
+                initialDelay: {
+                  type: 'number',
+                  description: '操作開始前の待機時間（ミリ秒、デフォルト: 2000）',
+                },
+                finalDelay: {
+                  type: 'number',
+                  description: '操作完了後の待機時間（ミリ秒、デフォルト: 2000）',
+                },
+              },
+            },
+          },
+          required: ['baseUrl', 'path', 'name'],
+        },
+      },
       {
         name: 'capture_screenshots',
         description: 'React/Next.jsモックアプリの画面を自動キャプチャします。設定ファイルで定義された全ページのスクリーンショットを撮影します。',
@@ -181,10 +763,33 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   try {
-    const configPath = resolveConfigPath(args?.configPath);
-
     switch (name) {
+      case 'navigate_and_capture': {
+        const result = await navigateAndCapture(args);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `✓ ページ遷移とキャプチャ完了\n\n${result.output}`,
+            },
+          ],
+        };
+      }
+
+      case 'navigate_and_record': {
+        const result = await navigateAndRecord(args);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `✓ ページ遷移と動画録画完了\n\n${result.output}`,
+            },
+          ],
+        };
+      }
+
       case 'capture_screenshots': {
+        const configPath = resolveConfigPath(args?.configPath);
         validateConfigPath(configPath);
         const result = await runCliTool(path.join(__dirname, 'bin', 'capture.js'), configPath);
         return {

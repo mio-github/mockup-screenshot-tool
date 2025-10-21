@@ -2,8 +2,8 @@
  * 設定ファイル読み込みモジュール
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 /**
  * 設定ファイルを読み込む
@@ -109,7 +109,7 @@ function resolvePathFromConfig(pathStr, baseDir) {
   return path.resolve(baseDir, pathStr);
 }
 
-module.exports = {
+export {
   loadConfig,
   validateConfig,
 };
