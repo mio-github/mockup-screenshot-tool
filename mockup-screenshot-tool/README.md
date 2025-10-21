@@ -11,6 +11,7 @@ React/Next.js製モックアプリケーションの全画面を自動キャプ�
 - **PDF生成**: カバーページ、システム概要、各画面の説明を含む完全なドキュメントを生成
 - **設定ファイル駆動**: JSON形式の設定ファイルで簡単にカスタマイズ可能
 - **汎用性**: 任意のReact/Next.jsモックアプリケーションに対応
+- **🆕 MCP対応**: Model Context Protocol対応でClaude経由でも使用可能（CLI/MCP両対応）
 
 ## インストール
 
@@ -53,7 +54,11 @@ mst-pdf-detail # PDF生成（詳細版・2ページ構成）🆕
 
 ## 使い方
 
-### 1. 設定ファイルの作成
+このツールは **CLI（コマンドライン）** と **MCP（Claude経由）** の両方で使用できます。
+
+### CLI（コマンドライン）での使い方
+
+#### 1. 設定ファイルの作成
 
 プロジェクトルートに `mockup-config.json` を作成します（または既存のものをコピー）：
 
@@ -61,7 +66,7 @@ mst-pdf-detail # PDF生成（詳細版・2ページ構成）🆕
 cp config/config.example.json /path/to/your/project/mockup-config.json
 ```
 
-### 2. 設定ファイルの編集
+#### 2. 設定ファイルの編集
 
 `mockup-config.json` を編集して、プロジェクトに合わせて設定します：
 
@@ -71,16 +76,16 @@ cp config/config.example.json /path/to/your/project/mockup-config.json
 - `annotations`: 各画面のアノテーション定義
 - `screens`: PDF生成時の画面説明
 
-### 3. Next.jsアプリを起動
+#### 3. Next.jsアプリを起動
 
 ```bash
 cd /path/to/your/nextjs-app
 npm run dev
 ```
 
-### 4. ツールの実行
+#### 4. ツールの実行
 
-#### 全工程を一括実行
+##### 全工程を一括実行
 
 ```bash
 cd /path/to/your/project
@@ -89,7 +94,7 @@ node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js
 node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js
 ```
 
-#### 個別に実行
+##### 個別に実行
 
 ```bash
 # 動画録画のみ（アクション定義が必要）
@@ -107,6 +112,53 @@ node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js
 # PDF生成のみ（詳細版・2ページ構成）
 node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf-detailed.js
 ```
+
+### MCP（Model Context Protocol）での使い方
+
+Claude DesktopやClaude Code経由で自然言語で操作できます。
+
+#### セットアップ
+
+Claude Desktopの設定ファイル（`~/Library/Application Support/Claude/claude_desktop_config.json`）に以下を追加：
+
+```json
+{
+  "mcpServers": {
+    "mockup-screenshot-tool": {
+      "command": "node",
+      "args": [
+        "/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js"
+      ]
+    }
+  }
+}
+```
+
+詳細は [MCP_SETUP.md](./MCP_SETUP.md) を参照してください。
+
+#### 使用例
+
+Claudeに以下のように指示するだけで自動実行されます：
+
+```
+モックアプリの全画面をキャプチャして、アノテーション付きのPDFを作成して
+```
+
+```
+詳細版のPDFドキュメントを生成して（2ページ構成で）
+```
+
+```
+モックアプリの操作を録画して
+```
+
+#### 利用可能なMCPツール
+
+- `capture_screenshots`: 画面キャプチャ
+- `add_annotations`: アノテーション追加
+- `generate_pdf`: PDF生成（シングル/詳細版）
+- `generate_all`: 全工程一括実行
+- `record_video`: 動画録画
 
 ## 設定ファイルの構造
 
