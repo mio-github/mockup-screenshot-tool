@@ -2,7 +2,7 @@
 
 # Mockup Screenshot Tool エイリアス設定スクリプト
 
-TOOL_DIR="/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool"
+TOOL_DIR="/Users/masayahirano/script/AI-tools/mockup-screenshot-tool"
 SHELL_RC="$HOME/.zshrc"
 
 # .zshrcが存在しない場合は作成
@@ -20,9 +20,9 @@ fi
 cat >> "$SHELL_RC" << 'EOF'
 
 # Mockup Screenshot Tool
-alias mst-capture="node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js"
-alias mst-annotate="node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/annotate.js"
-alias mst-pdf="node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js"
+alias mst-capture="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/capture.js"
+alias mst-annotate="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js"
+alias mst-pdf="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js"
 EOF
 
 echo "✓ エイリアスを $SHELL_RC に追加しました"

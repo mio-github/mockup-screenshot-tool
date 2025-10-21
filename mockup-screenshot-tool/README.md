@@ -5,6 +5,8 @@ React/Next.js製モックアプリケーションの全画面を自動キャプ�
 ## 特徴
 
 - **自動スクリーンショット**: Playwrightを使用して複数の画面を自動キャプチャ
+- **🆕 動画録画**: ブラウザ操作を録画してWebM形式で保存
+- **🆕 MCPブラウザ操作**: クリック、入力、スクロールなど、ユーザー操作を自動化
 - **アノテーション追加**: SVGベースの吹き出しアノテーションを画像に追加
 - **PDF生成**: カバーページ、システム概要、各画面の説明を含む完全なドキュメントを生成
 - **設定ファイル駆動**: JSON形式の設定ファイルで簡単にカスタマイズ可能
@@ -13,7 +15,7 @@ React/Next.js製モックアプリケーションの全画面を自動キャプ�
 ## インストール
 
 ```bash
-cd /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool
+cd /Users/masayahirano/script/AI-tools/mockup-screenshot-tool
 npm install
 npm run setup  # Playwright Chromiumのインストール
 ```
@@ -29,9 +31,10 @@ npm run setup  # Playwright Chromiumのインストール
 # または手動で ~/.zshrc に追加
 echo '
 # Mockup Screenshot Tool
-alias mst-capture="node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js"
-alias mst-annotate="node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/annotate.js"
-alias mst-pdf="node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js"
+alias mst-capture="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/capture.js"
+alias mst-record="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/record-video.js"
+alias mst-annotate="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js"
+alias mst-pdf="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js"
 ' >> ~/.zshrc
 
 # 設定を反映
@@ -42,6 +45,7 @@ source ~/.zshrc
 
 ```bash
 mst-capture    # スクリーンショット撮影
+mst-record     # 動画録画（🆕）
 mst-annotate   # アノテーション追加
 mst-pdf        # PDF生成
 ```
@@ -79,22 +83,25 @@ npm run dev
 
 ```bash
 cd /path/to/your/project
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/annotate.js
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
+node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/capture.js
+node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js
+node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js
 ```
 
 #### 個別に実行
 
 ```bash
+# 動画録画のみ（アクション定義が必要）
+node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/record-video.js
+
 # スクリーンショット撮影のみ
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js
+node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/capture.js
 
 # アノテーション追加のみ
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/annotate.js
+node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js
 
 # PDF生成のみ
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
+node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js
 ```
 
 ## 設定ファイルの構造
@@ -186,10 +193,112 @@ node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
     "height": 600
   }
   ```
+- `actions` (オプション): **🆕 MCP対応ブラウザ操作** - スクリーンショット撮影前に実行するアクションリスト
+  ```json
+  "actions": [
+    {
+      "type": "click",
+      "selector": "button.menu",
+      "description": "メニューボタンをクリック"
+    },
+    {
+      "type": "type",
+      "selector": "input[name='search']",
+      "value": "検索ワード",
+      "description": "検索ボックスに入力"
+    }
+  ]
+  ```
 - `beforeScreenshot` (オプション): スクリーンショット撮影前に実行するJavaScriptコード
   ```json
   "beforeScreenshot": "await page.evaluate(() => window.scrollTo(0, 500)); await page.waitForTimeout(300)"
   ```
+
+#### actionsアクション定義（MCPブラウザ操作）
+
+**対応アクションタイプ:**
+
+- **click**: 要素をクリック
+  ```json
+  {
+    "type": "click",
+    "selector": "button.submit",
+    "description": "送信ボタンをクリック",
+    "waitAfter": 1000
+  }
+  ```
+
+- **type**: テキスト入力
+  ```json
+  {
+    "type": "type",
+    "selector": "input[name='username']",
+    "value": "test_user",
+    "description": "ユーザー名を入力"
+  }
+  ```
+
+- **scroll**: スクロール位置を変更
+  ```json
+  {
+    "type": "scroll",
+    "x": 0,
+    "y": 500,
+    "description": "Y座標500までスクロール"
+  }
+  ```
+
+- **hover**: 要素にホバー
+  ```json
+  {
+    "type": "hover",
+    "selector": ".dropdown-menu",
+    "description": "ドロップダウンメニューにホバー"
+  }
+  ```
+
+- **select**: ドロップダウンで値を選択
+  ```json
+  {
+    "type": "select",
+    "selector": "select[name='category']",
+    "value": "option1",
+    "description": "カテゴリを選択"
+  }
+  ```
+
+- **wait**: 待機
+  ```json
+  {
+    "type": "wait",
+    "duration": 2000,
+    "description": "2秒待機"
+  }
+  ```
+
+- **waitForSelector**: 要素の表示を待つ
+  ```json
+  {
+    "type": "waitForSelector",
+    "selector": ".content-loaded",
+    "timeout": 5000,
+    "description": "コンテンツの読み込み完了を待つ"
+  }
+  ```
+
+- **evaluate**: カスタムJavaScript実行
+  ```json
+  {
+    "type": "evaluate",
+    "code": "() => document.querySelector('.modal').remove()",
+    "description": "モーダルを削除"
+  }
+  ```
+
+**共通パラメータ:**
+- `description` (オプション): アクションの説明（ログ出力用）
+- `waitAfter` (オプション): アクション実行後の待機時間（ミリ秒、デフォルト300ms）
+- `required` (オプション): `true`の場合、アクション失敗時にキャプチャを中止
 
 #### annotations定義
 - `x`, `y`: アノテーションの対象座標
@@ -204,6 +313,90 @@ node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
 - `description`: 画面の詳細説明
 
 ## 高度な使用例
+
+### MCPブラウザ操作を使った動的画面のキャプチャ
+
+ボタンクリックやフォーム入力など、ユーザー操作が必要な画面を自動化してキャプチャできます：
+
+```json
+{
+  "pages": [
+    {
+      "path": "/settings",
+      "name": "settings_modal_open",
+      "waitStrategy": "basic",
+      "actions": [
+        {
+          "type": "click",
+          "selector": "button[data-action='open-settings']",
+          "description": "設定モーダルを開く",
+          "waitAfter": 500
+        },
+        {
+          "type": "waitForSelector",
+          "selector": ".settings-modal.visible",
+          "timeout": 3000,
+          "description": "モーダルの表示を待つ"
+        },
+        {
+          "type": "click",
+          "selector": ".tab-advanced",
+          "description": "詳細設定タブをクリック"
+        }
+      ]
+    },
+    {
+      "path": "/search",
+      "name": "search_results",
+      "waitStrategy": "basic",
+      "actions": [
+        {
+          "type": "type",
+          "selector": "input[name='q']",
+          "value": "テストクエリ",
+          "description": "検索ワードを入力"
+        },
+        {
+          "type": "click",
+          "selector": "button[type='submit']",
+          "description": "検索実行",
+          "waitAfter": 2000
+        },
+        {
+          "type": "waitForSelector",
+          "selector": ".search-results",
+          "description": "検索結果の表示を待つ"
+        }
+      ]
+    },
+    {
+      "path": "/dropdown-menu",
+      "name": "dropdown_expanded",
+      "waitStrategy": "basic",
+      "actions": [
+        {
+          "type": "hover",
+          "selector": ".dropdown-trigger",
+          "description": "ドロップダウンメニューにホバー",
+          "waitAfter": 800
+        },
+        {
+          "type": "waitForSelector",
+          "selector": ".dropdown-menu.visible",
+          "description": "ドロップダウンの表示を待つ"
+        }
+      ]
+    }
+  ]
+}
+```
+
+この設定により：
+- `settings_modal_open.png`: モーダルが開いた詳細設定タブの状態
+- `search_results.png`: 検索実行後の結果画面
+- `dropdown_expanded.png`: ドロップダウンメニューが展開された状態
+
+と、通常では1回のアクセスではキャプチャできない動的な状態を自動で撮影できます。
 
 ### 縦長画面を複数の画像に分割してキャプチャ
 

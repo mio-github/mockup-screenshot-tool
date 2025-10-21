@@ -22,6 +22,60 @@
       "path": "/dashboard",
       "name": "02_ダッシュボード",
       "waitStrategy": "graph"
+    },
+    {
+      "path": "/form",
+      "name": "03_フォーム入力例",
+      "waitStrategy": "basic",
+      "actions": [
+        {
+          "type": "click",
+          "selector": "button.menu-toggle",
+          "description": "メニューを開く"
+        },
+        {
+          "type": "type",
+          "selector": "input[name='username']",
+          "value": "test_user",
+          "description": "ユーザー名を入力"
+        },
+        {
+          "type": "select",
+          "selector": "select[name='category']",
+          "value": "option1",
+          "description": "カテゴリを選択"
+        },
+        {
+          "type": "wait",
+          "duration": 1000,
+          "description": "1秒待機"
+        },
+        {
+          "type": "click",
+          "selector": "button.submit",
+          "description": "送信ボタンをクリック",
+          "waitAfter": 2000
+        }
+      ]
+    },
+    {
+      "path": "/long-page",
+      "name": "04_スクロール例",
+      "waitStrategy": "basic",
+      "actions": [
+        {
+          "type": "scroll",
+          "x": 0,
+          "y": 500,
+          "description": "下にスクロール",
+          "waitAfter": 500
+        },
+        {
+          "type": "waitForSelector",
+          "selector": ".content-section",
+          "description": "コンテンツセクションの表示を待つ"
+        }
+      ]
     }
   ],
   "annotations": {
