@@ -386,7 +386,7 @@ Claudeに以下のように指示するだけで自動実行されます：
 - `direction`: 吹き出しの方向（`top`, `bottom`, `left`, `right`）
 - `style` (オプション): スタイルプリセット名（デフォルト: `default`）
   - `default`: オレンジ系（標準）
-  - `price`: グリーン系（価格表示に最適、強調シャドウ付き）
+  - `highlight`: グリーン系（重要情報の強調表示、強調シャドウ付き）
   - `success`: 明るいグリーン系（成功/完了の表示）
   - `danger`: レッド系（警告/エラーの表示）
   - `info`: ブルー系（情報表示）
@@ -403,7 +403,7 @@ Claudeに以下のように指示するだけで自動実行されます：
         "text": "月額5〜10万円",
         "description": "エッジ主体型で\nコスト最適化",
         "direction": "right",
-        "style": "price"
+        "style": "highlight"
       },
       {
         "x": 800,
