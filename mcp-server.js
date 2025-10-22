@@ -752,6 +752,19 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
         },
       },
+      {
+        name: 'generate_flow_diagram',
+        description: '実際のスクリーンショット画像を使用してSVG形式の画面遷移図を生成します。各画面をサムネイル表示し、矢印で遷移関係を表現します。',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            configPath: {
+              type: 'string',
+              description: '設定ファイルのパス（省略時: カレントディレクトリのmockup-config.json）',
+            },
+          },
+        },
+      },
     ],
   };
 });
@@ -864,6 +877,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: 'text',
               text: `✓ 動画録画完了\n\n${result.output}`,
+            },
+          ],
+        };
+      }
+
+      case 'generate_flow_diagram': {
+        const configPath = resolveConfigPath(args?.configPath);
+        validateConfigPath(configPath);
+        const result = await runCliTool(path.join(__dirname, 'bin', 'flow-diagram.js'), configPath);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `✓ 画面遷移図生成完了\n\n${result.output}`,
             },
           ],
         };

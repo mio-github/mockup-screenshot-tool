@@ -7,6 +7,7 @@ React/Next.js製モックアプリケーションの全画面を自動キャプ�
 - **自動スクリーンショット**: Playwrightを使用して複数の画面を自動キャプチャ
 - **🆕 動画録画**: ブラウザ操作を録画してWebM形式で保存
 - **🆕 MCPブラウザ操作**: クリック、入力、スクロールなど、ユーザー操作を自動化
+- **🆕 画面遷移図生成**: 実際のスクリーンショットを使用したSVG形式の画面遷移図を自動生成
 - **アノテーション追加**: SVGベースの吹き出しアノテーションを画像に追加
 - **PDF生成**: カバーページ、システム概要、各画面の説明を含む完全なドキュメントを生成
 - **設定ファイル駆動**: JSON形式の設定ファイルで簡単にカスタマイズ可能
@@ -36,6 +37,7 @@ alias msc-capture="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/c
 alias msc-record="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/record-video.js"
 alias msc-annotate="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js"
 alias msc-pdf="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js"
+alias msc-flow="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/flow-diagram.js"
 ' >> ~/.zshrc
 
 # 設定を反映
@@ -50,6 +52,7 @@ msc-record     # 動画録画（🆕）
 msc-annotate   # アノテーション追加
 msc-pdf        # PDF生成（シングルページ構成）
 msc-pdf-detail # PDF生成（詳細版・2ページ構成）🆕
+msc-flow       # 画面遷移図生成（🆕）
 ```
 
 ## 使い方
@@ -111,7 +114,68 @@ node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js
 
 # PDF生成のみ（詳細版・2ページ構成）
 node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf-detailed.js
+
+# 画面遷移図生成のみ
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/flow-diagram.js
 ```
+
+#### 🆕 5. 画面遷移図の生成
+
+実際のスクリーンショットを使用したSVG形式の画面遷移図を生成できます。
+
+##### 設定ファイルに追加
+
+```json
+{
+  "flowDiagram": {
+    "enabled": true,
+    "fileName": "画面遷移図.svg",
+    "layout": "vertical",
+    "thumbnailSize": {
+      "width": 320,
+      "height": 180
+    },
+    "nodes": [
+      {
+        "id": "home",
+        "screenshot": "01_ホーム",
+        "label": "ホーム画面",
+        "description": "フェーズ選択"
+      },
+      {
+        "id": "poc",
+        "screenshot": "02_PoC_映像解析",
+        "label": "PoC: 映像解析",
+        "description": "録画映像アップロード"
+      }
+    ],
+    "edges": [
+      {
+        "from": "home",
+        "to": "poc",
+        "label": "PoC開発"
+      }
+    ]
+  }
+}
+```
+
+**レイアウトオプション:**
+- `vertical`: 縦並び（デフォルト）
+- `horizontal`: 横並び
+- `grid`: グリッド配置（3列）
+
+**実行:**
+
+```bash
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/flow-diagram.js
+```
+
+**機能:**
+- 実際のスクリーンショット画像をサムネイル表示
+- SVG矢印で画面遷移を表現
+- ラベルと説明文で各画面を解説
+- ホバー時のハイライト効果
 
 ### MCP（Model Context Protocol）での使い方
 

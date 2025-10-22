@@ -1,21 +1,22 @@
 {
-  "name": "mockup-screenshot-tool",
+  "name": "mio_sc_capture",
   "version": "1.1.0",
   "description": "React/Next.js製モックアプリケーションの全画面を自動キャプチャし、アノテーション付きPDFを生成するツール（CLI & MCP対応）",
   "type": "module",
   "main": "mcp-server.js",
   "bin": {
-    "mst-capture": "./bin/capture.js",
-    "mst-annotate": "./bin/annotate.js",
-    "mst-pdf": "./bin/pdf.js",
-    "mst-mcp": "./mcp-server.js"
+    "msc-capture": "./bin/capture.js",
+    "msc-annotate": "./bin/annotate.js",
+    "msc-pdf": "./bin/pdf.js",
+    "msc-mcp": "./mcp-server.js"
   },
   "scripts": {
     "capture": "node bin/capture.js",
     "annotate": "node bin/annotate.js",
     "pdf": "node bin/pdf.js",
     "all": "npm run capture && npm run annotate && npm run pdf",
-    "setup": "npm install && npx playwright install chromium"
+    "setup": "npm install && npx playwright install chromium",
+    "postinstall": "npx playwright install chromium --with-deps"
   },
   "keywords": [
     "screenshot",
@@ -29,9 +30,10 @@
   "author": "TARA",
   "license": "MIT",
   "dependencies": {
-    "playwright": "^1.56.0",
+    "@modelcontextprotocol/sdk": "^0.5.0",
     "image-size": "^2.0.2",
-    "@modelcontextprotocol/sdk": "^0.5.0"
+    "playwright": "^1.56.0",
+    "sharp": "^0.34.4"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.0"

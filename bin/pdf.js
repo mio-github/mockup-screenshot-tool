@@ -87,18 +87,41 @@ async function main() {
     await page.waitForTimeout(2000); // フォント・画像読み込み待機
 
     const pdfOpts = pdfOptions || {};
-    await page.pdf({
+    const pdfArgs = {
       path: outputPdfPath,
-      format: pdfOpts.format || 'A4',
-      landscape: pdfOpts.landscape !== false, // デフォルト true
-      printBackground: pdfOpts.printBackground !== false, // デフォルト true
+      printBackground: pdfOpts.printBackground !== false,
       margin: pdfOpts.margin || {
         top: '0',
         right: '0',
         bottom: '0',
         left: '0'
       }
-    });
+    };
+
+    if (pdfOpts.scale) {
+      pdfArgs.scale = pdfOpts.scale;
+    }
+
+    if (pdfOpts.width || pdfOpts.height) {
+      if (pdfOpts.width) {
+        pdfArgs.width = pdfOpts.width;
+      }
+      if (pdfOpts.height) {
+        pdfArgs.height = pdfOpts.height;
+      }
+      if (typeof pdfOpts.landscape === 'boolean') {
+        pdfArgs.landscape = pdfOpts.landscape;
+      }
+    } else {
+      pdfArgs.format = pdfOpts.format || 'A4';
+      pdfArgs.landscape = pdfOpts.landscape !== false; // デフォルト true
+    }
+
+    if (pdfOpts.preferCSSPageSize) {
+      pdfArgs.preferCSSPageSize = true;
+    }
+
+    await page.pdf(pdfArgs);
 
     // 一時HTMLファイル削除
     fs.unlinkSync(tempHtmlPath);

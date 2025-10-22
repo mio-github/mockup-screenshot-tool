@@ -12,7 +12,7 @@
 ### 1. 依存関係のインストール
 
 ```bash
-cd /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool
+cd /Users/masayahirano/script/AI-Tools/mio_sc_capture
 npm install
 ```
 
@@ -23,10 +23,10 @@ Claude Desktopの設定ファイル（`~/Library/Application Support/Claude/clau
 ```json
 {
   "mcpServers": {
-    "mockup-screenshot-tool": {
+    "mio_sc_capture": {
       "command": "node",
       "args": [
-        "/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js"
+        "/Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js"
       ]
     }
   }
@@ -142,7 +142,7 @@ PDFドキュメントを生成して
 2. Claude Desktopを完全に再起動
 3. ターミナルで直接実行して動作確認：
    ```bash
-   node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js
+   node /Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js
    ```
 
 ### 設定ファイルが見つからないエラー
@@ -153,7 +153,7 @@ PDFドキュメントを生成して
 ### 依存関係エラー
 
 ```bash
-cd /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool
+cd /Users/masayahirano/script/AI-Tools/mio_sc_capture
 npm install
 ```
 

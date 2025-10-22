@@ -28,10 +28,10 @@ open -e ~/.config/claude/claude_code_config.json
 ```json
 {
   "mcpServers": {
-    "mockup-screenshot-tool": {
+    "mio_sc_capture": {
       "command": "node",
       "args": [
-        "/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js"
+        "/Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js"
       ],
       "env": {}
     }
@@ -52,10 +52,10 @@ open -e ~/.config/claude/claude_code_config.json
       "command": "...",
       "args": [...]
     },
-    "mockup-screenshot-tool": {
+    "mio_sc_capture": {
       "command": "node",
       "args": [
-        "/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js"
+        "/Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js"
       ]
     }
   }
@@ -135,13 +135,13 @@ Claude Codeは自動的に `configPath` パラメータを設定してツール�
 
 2. **依存関係のインストール**
    ```bash
-   cd /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool
+   cd /Users/masayahirano/script/AI-Tools/mio_sc_capture
    npm install
    ```
 
 3. **手動でMCPサーバーを起動して確認**
    ```bash
-   node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js
+   node /Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js
    ```
 
    エラーが表示されなければ正常です（Ctrl+Cで終了）。
@@ -157,7 +157,7 @@ ls mockup-config.json
 なければ、config.example.json からコピー：
 
 ```bash
-cp /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/config/config.example.json ./mockup-config.json
+cp /Users/masayahirano/script/AI-Tools/mio_sc_capture/config/config.example.json ./mockup-config.json
 ```
 
 ### パーミッションエラー
@@ -165,7 +165,7 @@ cp /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-
 MCPサーバースクリプトに実行権限があることを確認：
 
 ```bash
-chmod +x /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js
+chmod +x /Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js
 ```
 
 ## Claude Desktop との違い
@@ -185,10 +185,10 @@ Claude Codeでは、プロジェクトディレクトリの `mockup-config.json`
 ```json
 {
   "mcpServers": {
-    "mockup-screenshot-tool": {
+    "mio_sc_capture": {
       "command": "node",
       "args": [
-        "/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js"
+        "/Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js"
       ],
       "env": {
         "NODE_ENV": "production",
@@ -204,10 +204,10 @@ Claude Codeでは、プロジェクトディレクトリの `mockup-config.json`
 ```json
 {
   "mcpServers": {
-    "mockup-screenshot-tool": {
+    "mio_sc_capture": {
       "command": "node",
       "args": [
-        "/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js"
+        "/Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js"
       ],
       "timeout": 300000
     }

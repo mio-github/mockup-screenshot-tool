@@ -1,5 +1,74 @@
 # Changelog
 
+## 2025-10-23 - 画面遷移図生成機能追加
+
+### 変更内容
+
+#### 画面遷移図生成機能 (NEW!)
+- **SVG形式の画面遷移図**: 実際のスクリーンショットを使用した画面遷移図を自動生成
+  - 各画面をサムネイル表示（サイズ指定可能）
+  - SVG矢印で遷移関係を表現
+  - ラベルと説明文で各画面を解説
+  - ホバー時のハイライト効果
+
+- **レイアウトオプション**:
+  - `vertical`: 縦並び（デフォルト）
+  - `horizontal`: 横並び
+  - `grid`: グリッド配置（3列）
+
+- **設定方法**:
+  ```json
+  {
+    "flowDiagram": {
+      "enabled": true,
+      "fileName": "画面遷移図.svg",
+      "layout": "vertical",
+      "thumbnailSize": { "width": 320, "height": 180 },
+      "nodes": [
+        {
+          "id": "home",
+          "screenshot": "01_ホーム",
+          "label": "ホーム画面",
+          "description": "フェーズ選択"
+        }
+      ],
+      "edges": [
+        { "from": "home", "to": "poc", "label": "PoC開発" }
+      ]
+    }
+  }
+  ```
+
+#### 実装詳細
+- **lib/flow-diagram-generator.js**: SVG生成コアロジック
+- **bin/flow-diagram.js**: CLIコマンド
+- **mcp-server.js**: MCPツール `generate_flow_diagram` 追加
+- **依存関係**: `sharp`パッケージを追加（画像のリサイズとBase64エンコード用）
+
+#### ドキュメント (`README.md`)
+- 画面遷移図生成機能の使用方法を追加
+- エイリアス `msc-flow` を追加
+
+### 使用例
+
+```bash
+# CLIで実行
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/flow-diagram.js
+
+# またはエイリアスで
+msc-flow
+
+# MCPで実行（Claude経由）
+"画面遷移図を生成して"
+```
+
+### メリット
+
+- **視覚的なドキュメント**: 画面遷移を一目で把握できる
+- **実際の画面使用**: スクリーンショットを使用するため、実装イメージが正確
+- **柔軟なレイアウト**: プロジェクトに応じて縦・横・グリッド配置を選択可能
+- **SVG形式**: 拡大しても劣化せず、ブラウザで直接表示可能
+
 ## 2025-10-23 - カスタムカラー対応 & モダン概要ページ追加
 
 ### 変更内容

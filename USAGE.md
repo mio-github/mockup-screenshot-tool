@@ -8,7 +8,7 @@
 
 ```bash
 cd /path/to/your/nextjs-project
-cp /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/config/config.example.json ./mockup-config.json
+cp /Users/masayahirano/script/AI-Tools/mio_sc_capture/config/config.example.json ./mockup-config.json
 ```
 
 設定ファイルを編集して、プロジェクトに合わせて調整します。
@@ -25,13 +25,13 @@ npm run dev
 
 ```bash
 # ステップ1: スクリーンショット撮影
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js
 
 # ステップ2: アノテーション追加
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/annotate.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js
 
 # ステップ3: PDF生成
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js
 ```
 
 ## エイリアスの設定（推奨）
@@ -39,18 +39,18 @@ node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
 シェル設定ファイル（`~/.zshrc` または `~/.bashrc`）に以下を追加すると便利です：
 
 ```bash
-# Mockup Screenshot Tool
-alias mst-capture="node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js"
-alias mst-annotate="node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/annotate.js"
-alias mst-pdf="node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js"
+# mio_sc_capture
+alias msc-capture="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js"
+alias msc-annotate="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js"
+alias msc-pdf="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js"
 ```
 
 設定後は以下のように簡単に実行できます：
 
 ```bash
-mst-capture
-mst-annotate
-mst-pdf
+msc-capture
+msc-annotate
+msc-pdf
 ```
 
 ## 設定ファイルの例
@@ -195,7 +195,7 @@ mst-pdf
 特定の設定ファイルを指定する場合：
 
 ```bash
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js /path/to/config.json
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js /path/to/config.json
 ```
 
 ### エラー: スクリーンショットが真っ白
@@ -209,7 +209,7 @@ node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js /
 アノテーションを追加する前に、スクリーンショットを撮影してください：
 
 ```bash
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js
 ```
 
 ### アノテーションが画像からはみ出る
@@ -232,9 +232,9 @@ npm run dev
 
 # 別のターミナルでツールを実行
 cd "/Volumes/KIOXIA/Developments/withAI/Vercel/Tara/NTTデータスミス/セルフレジ不正検知AIシステム"
-mst-capture
-mst-annotate
-mst-pdf
+msc-capture
+msc-annotate
+msc-pdf
 ```
 
 出力先: `mockup-app/mockup-output/screenshots-annotated/セルフレジ不正検知AIシステム_画面一覧.pdf`

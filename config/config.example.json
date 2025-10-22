@@ -127,6 +127,7 @@
     "format": "A4",
     "landscape": true,
     "printBackground": true,
+    "height": "420mm",
     "layout": "single"
   },
   "overview": {
