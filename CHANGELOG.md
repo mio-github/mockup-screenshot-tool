@@ -1,5 +1,72 @@
 # Changelog
 
+## 2025-10-23 - アノテーションスタイルプリセット追加 & バグ修正
+
+### 変更内容
+
+#### アノテーションシステム (`lib/html-generator.js`)
+- **スタイルプリセット追加**: アノテーションに6種類のスタイルプリセットを追加
+  - `default`: オレンジ系（標準）
+  - `price`: グリーン系（価格表示に最適、強調シャドウ付き）
+  - `success`: 明るいグリーン系（成功/完了の表示）
+  - `danger`: レッド系（警告/エラーの表示）
+  - `info`: ブルー系（情報表示）
+  - `warning`: イエロー系（注意喚起）
+
+- **設定方法**: 各アノテーションに `style` プロパティを追加
+  ```json
+  {
+    "x": 500,
+    "y": 300,
+    "text": "月額5〜10万円",
+    "description": "エッジ主体型で\nコスト最適化",
+    "direction": "right",
+    "style": "price"
+  }
+  ```
+
+#### MCPサーバー (`mcp-server.js`)
+- **バグ修正**: `add_annotations`、`generate_pdf`、`generate_all`、`record_video` ツールで `configPath` の解決処理が抜けていた問題を修正
+- これにより、MCPツール経由での実行時に「configPath is not defined」エラーが発生する問題を解決
+
+#### ドキュメント (`README.md`)
+- アノテーションスタイルプリセットの使用方法とサンプルコードを追加
+- 各スタイルの用途と視覚的な違いを説明
+
+### 使用例
+
+```json
+"annotations": {
+  "cost-comparison": {
+    "items": [
+      {
+        "x": 500,
+        "y": 300,
+        "text": "月額5〜10万円",
+        "description": "エッジ主体型で\nコスト最適化を実現",
+        "direction": "right",
+        "style": "price"
+      },
+      {
+        "x": 800,
+        "y": 500,
+        "text": "月額15〜20万円",
+        "description": "クラウド常時解析型",
+        "direction": "left",
+        "style": "danger"
+      }
+    ]
+  }
+}
+```
+
+### メリット
+
+- **表現力向上**: 価格、警告、成功など、コンテキストに応じた色分けが可能に
+- **視認性向上**: 価格表示用の `price` スタイルは強調シャドウで目立たせる設計
+- **柔軟性**: 用途に応じて6種類から選択可能、未指定時はデフォルトスタイル
+- **後方互換性**: 既存の設定ファイルはそのまま動作（デフォルトスタイル適用）
+
 ## 2025-10-16 - アノテーションなしモード追加
 
 ### 変更内容
@@ -24,10 +91,10 @@
 
 ```bash
 # スクリーンショット撮影
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/capture.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js
 
 # アノテーションをスキップして直接PDF生成
-node /Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/bin/pdf.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js
 ```
 
 これにより、アノテーションが不要な場合はスクリーンショット撮影後すぐにPDF生成が可能になりました。

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Mockup Screenshot Tool - MCP Server
+ * mio_sc_capture - MCP Server
  * Model Context Protocol対応サーバー
  */
 
@@ -485,7 +485,7 @@ function validateConfigPath(configPath) {
 // MCPサーバーインスタンス作成
 const server = new Server(
   {
-    name: 'mockup-screenshot-tool',
+    name: 'mio_sc_capture',
     version: '1.1.0',
   },
   {
@@ -803,6 +803,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'add_annotations': {
+        const configPath = resolveConfigPath(args?.configPath);
         validateConfigPath(configPath);
         const result = await runCliTool(path.join(__dirname, 'bin', 'annotate.js'), configPath);
         return {
@@ -816,6 +817,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'generate_pdf': {
+        const configPath = resolveConfigPath(args?.configPath);
         validateConfigPath(configPath);
         const scriptName = args?.detailed ? 'pdf-detailed.js' : 'pdf.js';
         const result = await runCliTool(path.join(__dirname, 'bin', scriptName), configPath);
@@ -830,6 +832,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'generate_all': {
+        const configPath = resolveConfigPath(args?.configPath);
         validateConfigPath(configPath);
 
         // 1. キャプチャ
@@ -853,6 +856,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'record_video': {
+        const configPath = resolveConfigPath(args?.configPath);
         validateConfigPath(configPath);
         const result = await runCliTool(path.join(__dirname, 'bin', 'record-video.js'), configPath);
         return {
@@ -887,7 +891,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('Mockup Screenshot Tool MCP Server started');
+  console.error('mio_sc_capture MCP Server started');
 }
 
 main().catch((error) => {

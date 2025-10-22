@@ -1,4 +1,4 @@
-# Mockup Screenshot Tool
+# mio_sc_capture
 
 React/Next.js製モックアプリケーションの全画面を自動キャプチャし、アノテーション付きPDFを生成する汎用ツールです。
 
@@ -16,7 +16,7 @@ React/Next.js製モックアプリケーションの全画面を自動キャプ�
 ## インストール
 
 ```bash
-cd /Users/masayahirano/script/AI-tools/mockup-screenshot-tool
+cd /Users/masayahirano/script/AI-Tools/mio_sc_capture
 npm install
 npm run setup  # Playwright Chromiumのインストール
 ```
@@ -31,11 +31,11 @@ npm run setup  # Playwright Chromiumのインストール
 
 # または手動で ~/.zshrc に追加
 echo '
-# Mockup Screenshot Tool
-alias mst-capture="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/capture.js"
-alias mst-record="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/record-video.js"
-alias mst-annotate="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js"
-alias mst-pdf="node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js"
+# mio_sc_capture
+alias msc-capture="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js"
+alias msc-record="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/record-video.js"
+alias msc-annotate="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js"
+alias msc-pdf="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js"
 ' >> ~/.zshrc
 
 # 設定を反映
@@ -45,11 +45,11 @@ source ~/.zshrc
 エイリアス設定後は以下のように実行できます：
 
 ```bash
-mst-capture    # スクリーンショット撮影
-mst-record     # 動画録画（🆕）
-mst-annotate   # アノテーション追加
-mst-pdf        # PDF生成（シングルページ構成）
-mst-pdf-detail # PDF生成（詳細版・2ページ構成）🆕
+msc-capture    # スクリーンショット撮影
+msc-record     # 動画録画（🆕）
+msc-annotate   # アノテーション追加
+msc-pdf        # PDF生成（シングルページ構成）
+msc-pdf-detail # PDF生成（詳細版・2ページ構成）🆕
 ```
 
 ## 使い方
@@ -89,28 +89,28 @@ npm run dev
 
 ```bash
 cd /path/to/your/project
-node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/capture.js
-node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js
-node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js
 ```
 
 ##### 個別に実行
 
 ```bash
 # 動画録画のみ（アクション定義が必要）
-node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/record-video.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/record-video.js
 
 # スクリーンショット撮影のみ
-node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/capture.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js
 
 # アノテーション追加のみ
-node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/annotate.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js
 
 # PDF生成のみ（シングルページ構成）
-node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js
 
 # PDF生成のみ（詳細版・2ページ構成）
-node /Users/masayahirano/script/AI-tools/mockup-screenshot-tool/bin/pdf-detailed.js
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf-detailed.js
 ```
 
 ### MCP（Model Context Protocol）での使い方
@@ -126,10 +126,10 @@ Claude DesktopやClaude Code経由で自然言語で操作できます。
 ```json
 {
   "mcpServers": {
-    "mockup-screenshot-tool": {
+    "mio_sc_capture": {
       "command": "node",
       "args": [
-        "/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js"
+        "/Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js"
       ]
     }
   }
@@ -145,10 +145,10 @@ Claude DesktopやClaude Code経由で自然言語で操作できます。
 ```json
 {
   "mcpServers": {
-    "mockup-screenshot-tool": {
+    "mio_sc_capture": {
       "command": "node",
       "args": [
-        "/Users/masayahirano/script/AI-Tools/mockup-screenshot-tool/mockup-screenshot-tool/mcp-server.js"
+        "/Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js"
       ]
     }
   }
@@ -230,6 +230,7 @@ Claudeに以下のように指示するだけで自動実行されます：
     "format": "A4",
     "landscape": true,
     "printBackground": true,
+    "height": "420mm",
     "layout": "single"
   },
   "overview": {
@@ -383,6 +384,39 @@ Claudeに以下のように指示するだけで自動実行されます：
 - `text`: アノテーションのタイトル
 - `description`: 説明文（`\n`で改行可能）
 - `direction`: 吹き出しの方向（`top`, `bottom`, `left`, `right`）
+- `style` (オプション): スタイルプリセット名（デフォルト: `default`）
+  - `default`: オレンジ系（標準）
+  - `price`: グリーン系（価格表示に最適、強調シャドウ付き）
+  - `success`: 明るいグリーン系（成功/完了の表示）
+  - `danger`: レッド系（警告/エラーの表示）
+  - `info`: ブルー系（情報表示）
+  - `warning`: イエロー系（注意喚起）
+
+**スタイル使用例:**
+```json
+"annotations": {
+  "sample-page": {
+    "items": [
+      {
+        "x": 500,
+        "y": 300,
+        "text": "月額5〜10万円",
+        "description": "エッジ主体型で\nコスト最適化",
+        "direction": "right",
+        "style": "price"
+      },
+      {
+        "x": 800,
+        "y": 400,
+        "text": "処理完了",
+        "description": "正常に完了しました",
+        "direction": "top",
+        "style": "success"
+      }
+    ]
+  }
+}
+```
 
 #### screens配列（PDF生成用）
 - `filename`: 画像ファイル名（拡張子なし）
@@ -394,6 +428,9 @@ Claudeに以下のように指示するだけで自動実行されます：
 - `format`: 用紙サイズ（`A4`, `A3`, `Letter`など）
 - `landscape`: 横向き出力（`true` / `false`）
 - `printBackground`: 背景色を印刷（`true` / `false`）
+- `width`, `height`: 任意サイズを直接指定（例: `"height": "420mm"`）。指定時は`format`より優先され、縦長レイアウトなどが可能。
+- `scale`: ページ全体の拡大率（`0.1`〜`2`）
+- `preferCSSPageSize`: CSSの`@page`で指定したサイズを優先する（`true`）
 - `layout`: **🆕 PDFレイアウトモード**
   - `single`: 1ページ構成（デフォルト） - 各画面を1ページにまとめたコンパクトな形式
   - `detailed`: 2ページ構成 - 各画面を「スクリーンショット+サマリ」「詳細説明」の2ページで出力
@@ -403,6 +440,7 @@ Claudeに以下のように指示するだけで自動実行されます：
     "format": "A4",
     "landscape": true,
     "printBackground": true,
+    "height": "420mm",
     "layout": "single"
   }
   ```
@@ -410,6 +448,14 @@ Claudeに以下のように指示するだけで自動実行されます：
 **レイアウトモードの使い分け:**
 - `single`: クイックレビューや画面一覧を作成する場合に最適
 - `detailed`: 詳細な機能説明やプレゼンテーション資料として使用する場合に最適（`bin/pdf-detailed.js`を使用）
+
+## デザイン生成をブラッシュアップするヒント
+
+- **解像度を統一**: `viewport`を基本1920x1080に揃え、必要に応じて`clip`で要点のみを切り出すと、PDF上のレイアウトが安定します。
+- **コピーを事前設計**: `screens`の`title`/`category`/`description`を先に固め、`overview.sections`で物語の流れを決めておくと、生成ドキュメントの語調と情報密度が揃います。
+- **アノテーションで視線誘導**: `annotations`に方向（`direction`）と短い説明を設定し、`msc-annotate`→`msc-pdf`の順で実行すると、注目ポイントが明確なビジュアルになります。
+- **ブランドカラーに合わせる**: `screens.category`に`共通`/`PoC`/`MVP`などの分類を使えばカラーリングが自動適用されます。独自パレットが必要な場合は `lib/html-generator.js` の `getCategoryColor` を調整してください。
+- **成果物を比較検証**: 詳細説明が必要な場合は `msc-pdf-detail` で詳細版も出力し、関係者レビューでシングル/詳細の両方を見比べると訴求力を高められます。
 
 ## 高度な使用例
 
