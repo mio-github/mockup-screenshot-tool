@@ -2,7 +2,7 @@
 
 # mio_sc_capture エイリアス設定スクリプト
 
-TOOL_DIR="/Users/masayahirano/script/AI-Tools/mio_sc_capture"
+TOOL_DIR="/Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture"
 SHELL_RC="$HOME/.zshrc"
 
 # .zshrcが存在しない場合は作成
@@ -20,12 +20,12 @@ fi
 cat >> "$SHELL_RC" << 'EOF'
 
 # mio_sc_capture
-alias msc-capture="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js"
-alias msc-record="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/record-video.js"
-alias msc-annotate="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js"
-alias msc-pdf="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js"
-alias msc-pdf-detail="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf-detailed.js"
-alias msc-spec="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/spec-sheet.js"
+alias msc-capture="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/capture.js"
+alias msc-record="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/record-video.js"
+alias msc-annotate="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/annotate.js"
+alias msc-pdf="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/pdf.js"
+alias msc-pdf-detail="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/pdf-detailed.js"
+alias msc-spec="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/spec-sheet.js"
 EOF
 
 echo "✓ エイリアスを $SHELL_RC に追加しました"

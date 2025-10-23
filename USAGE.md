@@ -25,16 +25,16 @@ npm run dev
 
 ```bash
 # ステップ1: スクリーンショット撮影
-node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js
+node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/capture.js
 
 # ステップ2: アノテーション追加
-node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js
+node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/annotate.js
 
 # ステップ3: PDF生成
-node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js
+node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/pdf.js
 
 # （オプション）画面仕様書（Excel）生成
-node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/spec-sheet.js
+node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/spec-sheet.js
 ```
 
 ## エイリアスの設定（推奨）
@@ -43,10 +43,10 @@ node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/spec-sheet.js
 
 ```bash
 # mio_sc_capture
-alias msc-capture="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js"
-alias msc-annotate="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js"
-alias msc-pdf="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js"
-alias msc-spec="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/spec-sheet.js"
+alias msc-capture="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/capture.js"
+alias msc-annotate="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/annotate.js"
+alias msc-pdf="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/pdf.js"
+alias msc-spec="node /Users/masayahirano/script/Mio-AI-Tools/mio_sc_capture/bin/spec-sheet.js"
 ```
 
 設定後は以下のように簡単に実行できます：
@@ -57,6 +57,15 @@ msc-annotate
 msc-pdf
 msc-spec
 ```
+
+### 画面仕様書（Excel）生成について（🆕）
+
+`msc-spec` で生成される Excel は **1画面 = 1シート構成** です。各シートには以下が自動でレイアウトされます：
+
+- 番号付きの注釈マークを重ねたスクリーンショット（PNG）
+- 要素ごとの番号・種別・UIテキスト・CSSセレクタ・挙動や初期値・バリデーション情報をまとめた表
+
+番号はシート内の表と対応しているため、画面設計資料としてそのまま共有できます。
 
 ## 設定ファイルの例
 
