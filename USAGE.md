@@ -32,6 +32,9 @@ node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js
 
 # ステップ3: PDF生成
 node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js
+
+# （オプション）画面仕様書（Excel）生成
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/spec-sheet.js
 ```
 
 ## エイリアスの設定（推奨）
@@ -43,6 +46,7 @@ node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js
 alias msc-capture="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/capture.js"
 alias msc-annotate="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js"
 alias msc-pdf="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js"
+alias msc-spec="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/spec-sheet.js"
 ```
 
 設定後は以下のように簡単に実行できます：
@@ -51,6 +55,7 @@ alias msc-pdf="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.j
 msc-capture
 msc-annotate
 msc-pdf
+msc-spec
 ```
 
 ## 設定ファイルの例
@@ -68,6 +73,11 @@ msc-pdf
   "screenshotsDir": "./mockup-output/screenshots",
   "annotatedDir": "./mockup-output/screenshots-annotated",
   "pdfFileName": "画面一覧.pdf",
+  "specSheet": {
+    "outputDir": "./mockup-output/specifications",
+    "fileName": "画面設計仕様書.xlsx",
+    "screenshotDir": "./mockup-output/specifications/screens"
+  },
   "viewport": {
     "width": 1920,
     "height": 1080

@@ -8,6 +8,11 @@
   "screenshotsDir": "./mockup-output/screenshots",
   "annotatedDir": "./mockup-output/screenshots-annotated",
   "pdfFileName": "画面一覧.pdf",
+  "specSheet": {
+    "outputDir": "./mockup-output/specifications",
+    "fileName": "画面設計仕様書.xlsx",
+    "screenshotDir": "./mockup-output/specifications/screens"
+  },
   "viewport": {
     "width": 1440,
     "height": 900

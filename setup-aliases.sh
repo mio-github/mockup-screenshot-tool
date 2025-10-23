@@ -25,6 +25,7 @@ alias msc-record="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/re
 alias msc-annotate="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js"
 alias msc-pdf="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js"
 alias msc-pdf-detail="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf-detailed.js"
+alias msc-spec="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/spec-sheet.js"
 EOF
 
 echo "✓ エイリアスを $SHELL_RC に追加しました"
@@ -38,3 +39,4 @@ echo "  msc-record       # 動画録画"
 echo "  msc-annotate     # アノテーション追加"
 echo "  msc-pdf          # PDF生成（シングルページ）"
 echo "  msc-pdf-detail   # PDF生成（詳細版・2ページ構成）"
+echo "  msc-spec         # 画面仕様書（Excel）生成"

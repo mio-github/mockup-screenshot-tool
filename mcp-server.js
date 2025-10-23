@@ -17,6 +17,8 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { chromium } from 'playwright';
 import { promisify } from 'util';
+import { loadConfig } from './lib/config-loader.js';
+import { generateSpecSheet } from './lib/spec-sheet-generator.js';
 
 const execPromise = promisify(exec);
 
@@ -740,6 +742,27 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: 'generate_spec_sheet',
+        description: '画面を自動で解析し、ボタン・リンク・入力項目の仕様をまとめたExcel画面設計書を生成します。必要に応じてスクリーンショットも再撮影します。',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            configPath: {
+              type: 'string',
+              description: '設定ファイルのパス（省略時: カレントディレクトリのmockup-config.json）',
+            },
+            outputDir: {
+              type: 'string',
+              description: 'Excel出力先ディレクトリを指定する場合に使用します',
+            },
+            fileName: {
+              type: 'string',
+              description: '生成されるExcelファイル名（拡張子含む）',
+            },
+          },
+        },
+      },
+      {
         name: 'record_video',
         description: 'ブラウザ操作を録画してWebM形式の動画を生成します。設定ファイルで定義されたアクションシーケンスを実行しながら録画します。',
         inputSchema: {
@@ -863,6 +886,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: 'text',
               text: `✓ 全工程完了\n\n【1. スクリーンショットキャプチャ】\n${captureResult.output}\n\n【2. アノテーション追加】\n${annotateResult.output}\n\n【3. PDF生成】\n${pdfResult.output}`,
+            },
+          ],
+        };
+      }
+
+      case 'generate_spec_sheet': {
+        const configPath = resolveConfigPath(args?.configPath);
+        validateConfigPath(configPath);
+        const config = loadConfig(configPath);
+
+        const options = {};
+        if (args?.outputDir) {
+          options.outputDir = path.isAbsolute(args.outputDir)
+            ? args.outputDir
+            : path.resolve(process.cwd(), args.outputDir);
+        }
+        if (args?.fileName) {
+          options.fileName = args.fileName;
+        }
+
+        const result = await generateSpecSheet(config, options);
+        return {
+          content: [
+            {
+              type: 'text',
+              text: `✓ 画面設計仕様書を生成しました\n\nExcel: ${result.outputPath}\nスクリーンショット: ${result.screenshotDir}`,
             },
           ],
         };

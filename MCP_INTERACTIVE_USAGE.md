@@ -295,6 +295,29 @@ LLMが実行するMCP呼び出し:
 | `capture_screenshots` | 設定ファイルで定義された全ページを一括キャプチャ | 事前にmockup-config.jsonを作成 |
 | `navigate_and_capture` | LLMが1ページずつ自由に操作してキャプチャ | LLMがその場で指示を生成 |
 
+## Excel仕様書の自動生成（generate_spec_sheet）
+
+画面要素を解析し、ボタン/リンク/入力項目を整理した画面仕様書（Excel形式）を生成できます。スクリーンショットも合わせて再撮影されます。
+
+```json
+{
+  "tool": "generate_spec_sheet",
+  "arguments": {
+    "configPath": "./mockup-config.json",
+    "outputDir": "./mockup-output/specifications",
+    "fileName": "画面設計仕様書.xlsx"
+  }
+}
+```
+
+生成されるExcelには以下のシートが含まれます：
+
+- `Screens`: 画面ID、URL、主要な見出し、カテゴリ、説明、スクリーンショットパス
+- `ボタン・リンク`: 各画面のボタン/リンク要素と遷移先・設定アクション
+- `入力項目`: フォームフィールド、必須判定、バリデーション情報、関連アクション
+
+LLMが `generate_spec_sheet` を実行した結果は、Claude Code側のターミナルに出力されたファイルパスから直接参照できます。
+
 ## 利点
 
 1. **柔軟性**: 設定ファイル不要で、その場で操作を指示できる

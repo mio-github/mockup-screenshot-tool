@@ -8,6 +8,7 @@ React/Next.js製モックアプリケーションの全画面を自動キャプ�
 - **🆕 動画録画**: ブラウザ操作を録画してWebM形式で保存
 - **🆕 MCPブラウザ操作**: クリック、入力、スクロールなど、ユーザー操作を自動化
 - **🆕 画面遷移図生成**: 実際のスクリーンショットを使用したSVG形式の画面遷移図を自動生成
+- **🆕 画面仕様書生成**: DOM解析によりボタン/リンク/フォームの要件をExcel形式で整理
 - **アノテーション追加**: SVGベースの吹き出しアノテーションを画像に追加
 - **PDF生成**: カバーページ、システム概要、各画面の説明を含む完全なドキュメントを生成
 - **設定ファイル駆動**: JSON形式の設定ファイルで簡単にカスタマイズ可能
@@ -38,6 +39,7 @@ alias msc-record="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/re
 alias msc-annotate="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/annotate.js"
 alias msc-pdf="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf.js"
 alias msc-flow="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/flow-diagram.js"
+alias msc-spec="node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/spec-sheet.js"
 ' >> ~/.zshrc
 
 # 設定を反映
@@ -53,6 +55,7 @@ msc-annotate   # アノテーション追加
 msc-pdf        # PDF生成（シングルページ構成）
 msc-pdf-detail # PDF生成（詳細版・2ページ構成）🆕
 msc-flow       # 画面遷移図生成（🆕）
+msc-spec       # 画面仕様書（Excel）生成（🆕）
 ```
 
 ## 使い方
@@ -117,6 +120,9 @@ node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/pdf-detailed.js
 
 # 画面遷移図生成のみ
 node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/flow-diagram.js
+
+# 画面仕様書（Excel）生成のみ
+node /Users/masayahirano/script/AI-Tools/mio_sc_capture/bin/spec-sheet.js
 ```
 
 #### 🆕 5. 画面遷移図の生成
