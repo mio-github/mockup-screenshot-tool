@@ -431,9 +431,9 @@ async function navigateAndRecord(args) {
 async function runCliTool(scriptPath, configPath = null, additionalArgs = []) {
   return new Promise((resolve, reject) => {
     const args = configPath ? [scriptPath, configPath, ...additionalArgs] : [scriptPath, ...additionalArgs];
-    const child = spawn('node', args, {
+    const child = spawn(process.execPath, args, {
       cwd: __dirname,
-      env: process.env,
+      env: { ...process.env },
     });
 
     let stdout = '';
