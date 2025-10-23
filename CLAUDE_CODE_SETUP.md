@@ -62,7 +62,35 @@ open -e ~/.config/claude/claude_code_config.json
 }
 ```
 
-### 4. Claude Codeを再起動 ⚠️ 重要
+### 4. Claude Code CLIからMCP登録（推奨）
+
+`claude` CLIが利用できる環境では、次のコマンドでも登録できます。既に登録済みの場合は「already exists」と表示されます。
+
+```bash
+claude mcp add mio_sc_capture -- node /Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js
+```
+
+### 5. プロジェクト側の許可設定（`.claude/settings.local.json`）
+
+各プロジェクト配下でClaude Codeを使う場合、`PROJECT_ROOT/.claude/settings.local.json` に以下の許可を追加します（存在しない場合は作成）。
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/masayahirano/script/AI-Tools/mio_sc_capture/**)",
+      "Bash(node /Users/masayahirano/script/AI-Tools/mio_sc_capture/mcp-server.js:*)",
+      "Read(//Users/masayahirano/.claude.json)",
+      "Write(//Users/masayahirano/.claude.json)"
+    ]
+  }
+}
+```
+
+- 既存の `allow` 配列がある場合は追記します。
+- `node` コマンドの絶対パスは実行環境に合わせて調整してください。
+
+### 6. Claude Codeを再起動 ⚠️ 重要
 
 **設定を反映させるため、Claude Codeのプロセスを完全に終了してから再起動してください。**
 
@@ -217,9 +245,9 @@ Claude Codeでは、プロジェクトディレクトリの `mockup-config.json`
 
 ## まとめ
 
-1. `~/.config/claude/claude_code_config.json` に設定を追加
-2. Claude Codeを再起動
-3. プロジェクトディレクトリに `mockup-config.json` を配置
-4. Claude Codeで自然言語で指示
+1. `~/.config/claude/claude_code_config.json` に `mio_sc_capture` を追加
+2. 必要に応じて `claude mcp add mio_sc_capture -- node ...` でCLI登録
+3. プロジェクト配下の `.claude/settings.local.json` で権限を許可
+4. Claude Codeを再起動し、`mockup-config.json` を用意した状態で自然言語指示を送る
 
 これで、Claude Code経由で簡単にモックアプリのドキュメント生成ができます！
